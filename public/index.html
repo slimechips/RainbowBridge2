@@ -1,0 +1,88 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>My First Rainbow Application</title>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/es6-promise/4.0.5/es6-promise.min.js"></script>
+        <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
+        <script src="//cdn.jsdelivr.net/momentjs/2.15.1/moment-with-locales.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.min.js"></script>
+        <script src="./vendors-sdk.min.js"></script>
+
+        <script type="module" src="./index.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        <h1>My First Rainbow Application</h1>
+        <textarea id="chatarea" rows="20" cols="150" readonly="true"></textarea>
+        <textarea id="sendchatarea" rows="2" cols="150"></textarea>
+        <button class="sendbutton">Send Message</button>
+        <br>
+        <br>
+        <h2>Find Agent</h2>
+        <label for='ageent_name'>Agent: </label><span id="agent_status"></span>
+        <br>
+        <!-- Agent:
+        <textarea id="agent_status"></textarea> -->
+        
+        <br>
+
+        <div>
+            
+
+            <label for='username'>your username:</label> 
+            <input required type='text' className='form-control col-md-11' id='username_input' placeholder="Username" onKeyPress={this.handleKeyPress} />
+            <br><br>
+
+            <label for='email'>your Email:</label> 
+            <input required type='text' className='form-control col-md-11' id='email_input' placeholder="Email" onKeyPress={this.handleKeyPress} />
+            <br>
+            <br>
+
+            <label for="category">Choose a Category</label>
+            <select class="dropdownlist" value="category" id="category_input">
+                <option value="sales">sales</option>
+                <option value="it">it</option>
+            </select>
+            <br><br>
+
+        </div>
+        <button class="requestbutton">Request Agent</button>
+
+
+
+        <script>
+
+            // var isChrome = userAgent.indexOf('chrome'); 
+            // var isEdge = userAgent.indexOf('edge'); 
+            // var isIE = userAgent.indexOf('trident'); 
+            
+            // if(isChrome > -1){ 
+            //     if(isEdge > -1){ //Edge는 Chrome과 Edge 모두의 값을 가지고 있기 때문에 
+            //         alert("Edge 브라우저"); 
+            //     }else { 
+            //         alert("Chrome 브라우저"); 
+            //     }
+            // }else { alert("Chrome이 아닙니다"); 
+            // }
+            // function ifun(msg){
+            //     alert(msg)
+            // }
+
+            
+            
+
+            // function starting(){
+            //     var userAgentInfo = window.navigator.userAgent;
+            //     console.log(userAgentInfo)
+            // }
+        </script>
+
+        <!--<br>
+        <button class="requestbutton">Request Agent</button>
+        -->
+    </body>
+</html>
