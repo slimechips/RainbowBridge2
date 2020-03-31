@@ -13,9 +13,35 @@
         <script src="./vendors-sdk.min.js"></script>
 
         <script type="module" src="./index.js"></script>
-        <link rel="stylesheet" type="text/css" href="style.css">
+        <link rel="stylesheet" type="text/css" href="style.css?ver=3">
     </head>
+
     <body>
+        <div class='root'>
+            <div class='box'>
+                <div class='wave -one'></div>
+                <div class='wave -two'></div>
+                <div class='wave -three'></div>
+                <div class='title'>RainbowBridge</div>
+            </div>
+            <div class="rightbox"> 
+                <label class='findagent'>Find Your Agent</label>
+                <br><br><br>
+                <input required type='text' class='form1' id='username_input' placeholder="Username" onKeyPress={this.handleKeyPress} />
+                <input required type='text' class='form' id='email_input' placeholder="Email" onKeyPress={this.handleKeyPress} />
+                 <div class="dropdown">
+                    <select class="dropdownlist" value="Category">
+                        <option value="sales">Sales</option>
+                        <option value="it">IT</option>
+                    </select>
+                </div>
+                <button class="requestbutton" onClick="location.href='chat.html'">REQUEST</button>
+            </div>
+        </div>
+    </body>
+
+
+    <!-- <body>
         <h1>My First Rainbow Application</h1>
         <textarea id="chatarea" rows="20" cols="150" readonly="true"></textarea>
         <textarea id="sendchatarea" rows="2" cols="150"></textarea>
@@ -25,14 +51,8 @@
         <h2>Find Agent</h2>
         <label for='ageent_name'>Agent: </label><span id="agent_status"></span>
         <br>
-        <!-- Agent:
-        <textarea id="agent_status"></textarea> -->
-        
         <br>
-
         <div>
-            
-
             <label for='username'>your username:</label> 
             <input required type='text' className='form-control col-md-11' id='username_input' placeholder="Username" onKeyPress={this.handleKeyPress} />
             <br><br>
@@ -48,41 +68,7 @@
                 <option value="it">it</option>
             </select>
             <br><br>
-
         </div>
         <button class="requestbutton">Request Agent</button>
-
-
-
-        <script>
-
-            // var isChrome = userAgent.indexOf('chrome'); 
-            // var isEdge = userAgent.indexOf('edge'); 
-            // var isIE = userAgent.indexOf('trident'); 
-            
-            // if(isChrome > -1){ 
-            //     if(isEdge > -1){ //Edge는 Chrome과 Edge 모두의 값을 가지고 있기 때문에 
-            //         alert("Edge 브라우저"); 
-            //     }else { 
-            //         alert("Chrome 브라우저"); 
-            //     }
-            // }else { alert("Chrome이 아닙니다"); 
-            // }
-            // function ifun(msg){
-            //     alert(msg)
-            // }
-
-            
-            
-
-            // function starting(){
-            //     var userAgentInfo = window.navigator.userAgent;
-            //     console.log(userAgentInfo)
-            // }
-        </script>
-
-        <!--<br>
-        <button class="requestbutton">Request Agent</button>
-        -->
-    </body>
+    </body> -->
 </html>
