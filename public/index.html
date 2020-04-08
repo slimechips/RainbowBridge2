@@ -11,9 +11,8 @@
         <script src="//cdn.jsdelivr.net/momentjs/2.15.1/moment-with-locales.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.min.js"></script>
         <script src="./vendors-sdk.min.js"></script>
-
         <script type="module" src="./index.js"></script>
-        <link rel="stylesheet" type="text/css" href="style.css?ver=3">
+        <link rel="stylesheet" type="text/css" href="style.css?ver=2">
     </head>
 
     <body>
@@ -30,14 +29,16 @@
                 <input required type='text' class='form1' id='username_input' placeholder="Username" onKeyPress={this.handleKeyPress} />
                 <input required type='text' class='form' id='email_input' placeholder="Email" onKeyPress={this.handleKeyPress} />
                  <div class="dropdown">
-                    <select class="dropdownlist" value="Category">
+                    <select class="dropdownlist" id="category_input" value="Category">
                         <option value="sales">Sales</option>
                         <option value="it">IT</option>
                     </select>
                 </div>
-                <button class="requestbutton" onClick="location.href='chat.html'">REQUEST</button>
+    
+    <button class="requestbutton" >REQUEST</button>
             </div>
         </div>
+        <!-- <script type="module" src="./index.js"></script> -->
     </body>
 
 

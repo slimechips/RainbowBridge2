@@ -17,8 +17,8 @@ let agentId;
 let agentName;
 
 const onReady = async () => {
-    sendMessageBtn.addEventListener('click', sendClick, false);
     requestButton.addEventListener('click', requestClick, false);
+    // sendMessageBtn.addEventListener('click', sendClick, false);
 };
 
 var onLoaded = function onLoaded() {
@@ -50,15 +50,14 @@ const sendClick = () => {
 
 
 const requestClick = () => {
-    console.log("testt");
+    console.log("testttttt");
     console.log('name: ',username.value);
     console.log('email: ',email.value);
     console.log('category: ',category_input.value);
-
-
+    
     // var userAgentInfo = window.navigator.userAgent;
     // console.log(userAgentInfo,"userAgentInfo")
-
+    
     var userAgent = window.navigator.userAgent.toLowerCase(); //크롬일 경우 isChrome에는 Chrome이라는 문잘의 위치 값이 반환되고 크롬이 아닐경우는 //-1이 반환된다. 나머지도 동일 
     var isChrome = userAgent.indexOf('chrome'); 
     var isEdge = userAgent.indexOf('edge'); 
@@ -77,9 +76,9 @@ const requestClick = () => {
         //alert("Chrome이 아닙니다"); 
     }
     console.log("browserID: ",browser)
-
-
-
+    
+    
+    
     // TODO: Add http call to request for agent
     const body = JSON.stringify({
         support_req: {
@@ -101,8 +100,8 @@ const requestClick = () => {
         console.log(htmltext);
         const html = JSON.parse(htmltext);
         console.log(html)
-
-
+        
+        
         if (html.error == 'Adding support req failed'){
             console.log("No Available Agent")
             agentStatusText.innerHTML = "No Available Agent";
@@ -113,20 +112,21 @@ const requestClick = () => {
             agentStatusText.innerHTML = agentName;
         }
         rainbowSDK.connection.signin(email.value, 'Rainbow1!')
-            .then(res => {
-                console.log(res);
-                document.addEventListener(rainbowSDK.conversations.RAINBOW_ONCONVERSATIONCHANGED, (msg) => {
-                    console.log(msg);
-                    agentMessage(msg);
-                })
-                // rainbowSDK.im.sendMessageToConversation(conv, "Hilol");
-
+        .then(res => {
+            console.log(res);
+            document.addEventListener(rainbowSDK.conversations.RAINBOW_ONCONVERSATIONCHANGED, (msg) => {
+                console.log(msg);
+                agentMessage(msg);
             })
-            .catch(err => console.error(err));
+            // rainbowSDK.im.sendMessageToConversation(conv, "Hilol");
+            
+        })
+        .catch(err => console.error(err));
     });
     // alert("Connecting to Agent");
-
-
+    window.location ="chat.html";
+    
+    
 };
 
 
