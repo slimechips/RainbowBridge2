@@ -172,11 +172,11 @@ html, body {
 }
 
 .yourchat:after {
-	border-top: 0px solid transparent;
-    border-left: 0px solid transparent;
-    border-right: 10px solid transparent;
+    border-top: 0px solid transparent;
+    border-left: 10px solid transparent;
+    border-right: 0px solid transparent;
     border-bottom: 10px solid rgb(207, 206, 206);
-    /* content:""; */
+    content:"";
     position:absolute;
     bottom:10px;
     left:-10px;
