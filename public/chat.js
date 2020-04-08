@@ -1,10 +1,13 @@
 import rainbowSDK from './rainbow-sdk.min.js';
 
+const sendArea = document.getElementById('sendchatarea');
 const agentStatusText = document.getElementById('agent_status');
 const chatArea = document.getElementById('chatarea');
+const sendMessageBtn = document.getElementsByClassName('sendbutton')[0];
 let guestId;
 let agentId;
 let agentName;
+let currentConvo;
 
 const onReady = async () => {
 
@@ -82,19 +85,19 @@ var onLoaded = function onLoaded() {
           })
           .then(conv => {
             console.log(conv);
+            currentConvo = conv;
             return rainbowSDK.im.sendMessageToConversation(conv, 'I am the customer hi');
           })
           .then(res => {
-              console.log(res);
-              document.addEventListener(rainbowSDK.im.RAINBOW_ONNEWIMMESSAGERECEIVED, (msg, conv, cc) => {
-                console.log("ON IM RECIEVED");
-                console.log(JSON.stringify(msg));
-                console.log(conv);
-                console.log(cc);
-                agentMessage(extractMessage(msg));
-              });
-              // window.location.href ="chat.html";
-  
+            console.log(res);
+            document.addEventListener(rainbowSDK.im.RAINBOW_ONNEWIMMESSAGERECEIVED, (msg, conv, cc) => {
+              console.log("ON IM RECIEVED");
+              console.log(JSON.stringify(msg));
+              console.log(conv);
+              console.log(cc);
+              agentMessage(extractMessage(msg));
+            });
+            sendMessageBtn.addEventListener('click', sendClick, false);  
           })
           .catch((err => console.error(err)));
               // rainbowSDK.im.sendMessageToConversation(conv, "Hilol");
@@ -108,10 +111,12 @@ var onLoaded = function onLoaded() {
 };
 
 
-const logMessage = (message) => {
-  chatArea.innerHTML += `LOG: \n ${message} \n\n`;
-};
 
+const sendClick = () => {
+  chatArea.innerHTML += `YOU: \n ${sendArea.value} \n\n`;
+  sendMessageNetwork(sendArea.value);
+  sendArea.value = '';
+};
 
 const agentMessage = (message) => {
   chatArea.innerHTML += `Agent: \n ${message} \n\n`;
@@ -120,6 +125,11 @@ const agentMessage = (message) => {
 const extractMessage = (msg) => {
   return msg.detail.message.data;
 }
+
+const sendMessageNetwork = (msg) => {
+  if (currentConvo === undefined) return;
+  rainbowSDK.im.sendMessageToConversation(currentConvo, msg);
+};
 
 document.addEventListener(rainbowSDK.RAINBOW_ONREADY, onReady);
 

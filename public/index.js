@@ -5,21 +5,12 @@ import rainbowSDK from './rainbow-sdk.min.js';
  // Run using ./node_modules/http-server/bin/http-server public/ -p 8887
 
 let chatArea;
-const sendArea = document.getElementById('sendchatarea');
-const sendMessageBtn = document.getElementsByClassName('sendbutton')[0];
 //const categoryDropdown = document.getElementsByClassName('dropdownlist')[0];
 const requestButton = document.getElementsByClassName('requestbutton')[0];
 // var agentStatusText;
 var username = document.getElementById('username_input');
 var email = document.getElementById('email_input');
 var category_input = document.getElementById('category_input');
-
-
-
-const sendClick = () => {
-    chatArea.innerHTML += `You: \n ${sendArea.value} \n\n`;
-    sendArea.value = '';
-};
 
 const requestClick = () => {
     console.log("testttttt");
@@ -60,7 +51,4 @@ const requestClick = () => {
 
 if (requestButton !== undefined){
     requestButton.addEventListener('click', requestClick, false);
-}
-if (sendMessageBtn !== undefined){
-    sendMessageBtn.addEventListener('click', sendClick, false);
 }
