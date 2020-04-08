@@ -17,8 +17,12 @@ let agentId;
 let agentName;
 
 const onReady = async () => {
-    requestButton.addEventListener('click', requestClick, false);
-    sendMessageBtn.addEventListener('click', sendClick, false);
+    if (requestButton){
+        requestButton.addEventListener('click', requestClick, false);
+    }
+    if (sendMessageBtn){
+        sendMessageBtn.addEventListener('click', sendClick, false);
+    }
 };
 
 var onLoaded = function onLoaded() {
@@ -100,6 +104,7 @@ const requestClick = () => {
         console.log(htmltext);
         const html = JSON.parse(htmltext);
         console.log(html)
+        logMessage(html);
         
         
         if (html.error == 'Adding support req failed'){
@@ -114,6 +119,7 @@ const requestClick = () => {
         rainbowSDK.connection.signin(email.value, 'Rainbow1!')
         .then(res => {
             console.log(res);
+            logMessage(res);
             document.addEventListener(rainbowSDK.conversations.RAINBOW_ONCONVERSATIONCHANGED, (msg) => {
                 console.log(msg);
                 agentMessage(msg);
@@ -129,7 +135,9 @@ const requestClick = () => {
     
 };
 
-
+const logMessage = (message) => {
+    chatArea.innerHTML += `LOG: \n ${message} \n\n`;
+};
 
 const agentMessage = (message) => {
     chatArea.innerHTML += `Agent: \n ${message} \n\n`;
