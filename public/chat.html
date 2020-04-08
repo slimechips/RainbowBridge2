@@ -11,8 +11,10 @@
         <script src="//cdn.jsdelivr.net/momentjs/2.15.1/moment-with-locales.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.min.js"></script>
         <script src="./vendors-sdk.min.js"></script>
+
         <script type="module" src="./chat.js"></script>
-        <link rel="stylesheet" type="text/css" href="chatstyle.css?ver=2">
+
+        <link rel="stylesheet" type="text/css" href="chatstyle.css?ver=130">
     </head>
     <body>
         <div class='base'>
@@ -23,14 +25,16 @@
                 <div class='title'>RainbowBridge</div>
             </div>
             <div class="rightbox">
-                <div class="chatw" >Chat with Agent: </div><span id="agent_status"></span>
-                <!-- <label for='ageent_name'>Agent: </label><span id="agent_status"></span> -->
-                <br>
-                <div class="chat">
-                    <textarea id="chatarea" rows="32" cols="100" readonly="true"></textarea>
-                    <textarea id="sendchatarea" rows="2" cols="93"></textarea>
-                    <button class="sendbutton">Send</button>
+                <div class="chatw">Agent : 
+                    <span id="agent_status"></span>
                 </div>
+                <!-- <label for='ageent_name'>Agent: </label><span id="agent_status"></span> -->
+                <div class="chat"></div>
+                <form class="send">
+                    <input id="sendchatarea" placeholder="Type here..." onkeypress="JavaScript:(this.form)"></input>
+                    <button class="sendbutton">Send</button>
+                </form>
+                
             </div>
         </div>
         

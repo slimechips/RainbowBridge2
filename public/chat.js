@@ -1,13 +1,19 @@
 import rainbowSDK from './rainbow-sdk.min.js';
 
+const myChat = document.getElementById('mychat');
+const yourChat = document.getElementById('yourchat');
+const chat = document.getElementsByClassName('chat')[0];
 const sendArea = document.getElementById('sendchatarea');
 const agentStatusText = document.getElementById('agent_status');
-const chatArea = document.getElementById('chatarea');
 const sendMessageBtn = document.getElementsByClassName('sendbutton')[0];
 let guestId;
 let agentId;
 let agentName;
 let currentConvo;
+let username;
+let email;
+let category;
+let browser;
 
 const onReady = async () => {
 
@@ -33,10 +39,10 @@ var onLoaded = function onLoaded() {
     .catch(err => {
         console.log('[Hello World] :: Something went wrong with the SDK.', err);
     }).then(() => {
-      const username = localStorage.getItem('username');
-      const email = localStorage.getItem('email');
-      const category = localStorage.getItem('category');
-      const browser = localStorage.getItem('browser');
+      username = localStorage.getItem('username');
+      email = localStorage.getItem('email');
+      category = localStorage.getItem('category');
+      browser = localStorage.getItem('browser');
   
       // TODO: Add http call to request for agent
       const body = JSON.stringify({
@@ -110,16 +116,26 @@ var onLoaded = function onLoaded() {
 
 };
 
-
-
 const sendClick = () => {
-  chatArea.innerHTML += `YOU: \n ${sendArea.value} \n\n`;
+  displayMyMessage(sendArea.value);
   sendMessageNetwork(sendArea.value);
   sendArea.value = '';
 };
 
+const displayMyMessage = (msg) => {
+  const myDIV = document.createElement("div");
+  myDIV.innerHTML += `\n ${msg} \n`;
+  myDIV.setAttribute("class","mychat");
+  document.getElementsByClassName('chat')[0].appendChild(myDIV);
+};
+
 const agentMessage = (message) => {
-  chatArea.innerHTML += `Agent: \n ${message} \n\n`;
+  const yourDIV = document.createElement("div");
+  yourDIV.innerHTML += `\n ${message} \n`;
+
+  yourDIV.setAttribute("class","yourchat");
+  
+  document.getElementsByClassName('chat')[0].appendChild(yourDIV);
 };
 
 const extractMessage = (msg) => {

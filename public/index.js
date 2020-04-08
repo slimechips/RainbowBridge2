@@ -1,10 +1,8 @@
 /* Chose one of the import statement below */
-import rainbowSDK from './rainbow-sdk.min.js';
 // const rainbowSDK = require('rainbow-web-sdk');
  // If you use the bundler (for example - Webpack)
  // Run using ./node_modules/http-server/bin/http-server public/ -p 8887
 
-let chatArea;
 //const categoryDropdown = document.getElementsByClassName('dropdownlist')[0];
 const requestButton = document.getElementsByClassName('requestbutton')[0];
 // var agentStatusText;
