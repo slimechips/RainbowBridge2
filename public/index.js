@@ -18,7 +18,7 @@ let agentName;
 
 const onReady = async () => {
     requestButton.addEventListener('click', requestClick, false);
-    // sendMessageBtn.addEventListener('click', sendClick, false);
+    sendMessageBtn.addEventListener('click', sendClick, false);
 };
 
 var onLoaded = function onLoaded() {
