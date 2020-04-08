@@ -5,15 +5,17 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Web Chat</title>
-        <!-- <script src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
+
+        <script src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/es6-promise/4.0.5/es6-promise.min.js"></script>
         <script src="//code.jquery.com/jquery-2.1.3.min.js"></script>
         <script src="//cdn.jsdelivr.net/momentjs/2.15.1/moment-with-locales.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.min.js"></script>
-        <script src="./vendors-sdk.min.js"></script> -->
+        <script src="./vendors-sdk.min.js"></script>
 
-        <script type="module" src="./index.js"></script>
-        <link rel="stylesheet" type="text/css" href="chatstyle.css?ver=2">
+        <script type="module" src="./chat.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="chatstyle.css?ver=130">
     </head>
     <body>
         <div class='base'>
@@ -24,14 +26,16 @@
                 <div class='title'>RainbowBridge</div>
             </div>
             <div class="rightbox">
-                <div class="chatw" >Chat with Agent: </div><span id="agent_status"></span>
-                <!-- <label for='ageent_name'>Agent: </label><span id="agent_status"></span> -->
-                <br>
-                <div class="chat">
-                    <textarea id="chatarea" rows="32" cols="100" readonly="true"></textarea>
-                    <textarea id="sendchatarea" rows="2" cols="93"></textarea>
-                    <button class="sendbutton">Send</button>
+                <div class="chatw">Agent : 
+                    <span id="agent_status"></span>
                 </div>
+                <!-- <label for='ageent_name'>Agent: </label><span id="agent_status"></span> -->
+                <div class="chat"></div>
+                <form class="send">
+                    <input id="sendchatarea" placeholder="Type here..." onkeypress="JavaScript:(this.form)"></input>
+                    <button class="sendbutton">Send</button>
+                </form>
+                
             </div>
         </div>
         

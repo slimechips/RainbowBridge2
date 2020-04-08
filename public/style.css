@@ -4,7 +4,7 @@
 @import "//netdna.bootstrapcdn.com/font-awesome/3.0/css/font-awesome.css";
 @import url('https://fonts.googleapis.com/css?family=IBM+Plex+Sans&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Assistant|IBM+Plex+Sans&display=swap');
-@import url('https://fonts.googleapis.com/css?family=Asap:400,500,600,700&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Asap:100,200,300,400,500,600,700&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Montserrat:400,800');
 @import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300);
 @import url('https://fonts.googleapis.com/css?family=Nanum+Gothic&display=swap');
@@ -161,7 +161,7 @@ input{
   border-left: none;
   border-right: none;
   /* border-bottom: 1px solid rgba(255, 255, 255, 0.300); */
-  border-bottom: 1px solid rgb(1, 142, 212);
+  border-bottom: 1px solid rgb(29, 141, 197);
   background-color: rgba(255, 255, 255, 0.300);
 
   width: 95%;
@@ -179,7 +179,7 @@ input.hover{
   background-color: rgba(255, 255, 255, 0.300);
 }
 input:focus{
-  border-bottom: 1.5px solid rgb(1, 142, 212);
+  border-bottom: 1.5px solid rgb(19, 94, 131);
 }
 ::placeholder{
   color: rgb(190, 204, 219);
@@ -194,7 +194,7 @@ input:focus{
   margin-top: 30px;
   margin-left: 2%;
   /* border: rgb(3, 114, 170); */
-  border: rgb(1, 142, 212);
+  border: rgb(29, 141, 197);
 }
 
 .dropdown select{
@@ -207,7 +207,7 @@ input:focus{
   height: 40px;
   appearance: none;
   /* border: 1px solid rgb(3, 114, 170); */
-  border: 1px solid rgb(1, 142, 212);
+  border: 1px solid rgb(29, 141, 197);
   background-color: transparent;
   color: black;
   font-family: 'Asap', sans-serif;
@@ -218,10 +218,10 @@ button{
   display: block;
   appearance: none;
   outline: 0;
-  background-color: rgb(1, 142, 212);
+  background-color: rgb(29, 141, 197);
   /* background-color: rgb(3, 114, 170); */
   /* border: none; */
-  border: 1px solid rgb(1, 142, 212);
+  border: 1px solid rgb(29, 141, 197);
   /* border: 1px solid rgba(255, 255, 255, 0.300); */
   width: 130px;
   height: 40px;
@@ -236,6 +236,7 @@ button{
   font-size: 17px;
   color: white;
   font-family: 'Asap', sans-serif;
+  font-weight: lighter;
   margin-top: 40px;
   margin-left: 48%;
   text-indent: .3em;

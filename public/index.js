@@ -8,7 +8,7 @@ const sendArea = document.getElementById('sendchatarea');
 const sendMessageBtn = document.getElementsByClassName('sendbutton')[0];
 //const categoryDropdown = document.getElementsByClassName('dropdownlist')[0];
 const requestButton = document.getElementsByClassName('requestbutton')[0];
-var agentStatusText = document.getElementById('agent_status');
+
 var username = document.getElementById('username_input');
 var email = document.getElementById('email_input');
 var category_input = document.getElementById('category_input');
@@ -53,10 +53,22 @@ const sendClick = () => {
 };
 
 
+var setCookie = function(name, value, exp) {
+    var date = new Date();
+    date.setTime(date.getTime() + exp*24*60*60*1000);
+    document.cookie = name + '=' + value + ';expires=' + date.toUTCString() + ';path=/';
+};
+
+var getCookie = function(name) {
+    var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return value? value[2] : null;
+};
+
 const requestClick = () => {
     console.log("testttttt");
     console.log('name: ',username.value);
     console.log('email: ',email.value);
+    setCookie("email",email.value,1);
     console.log('category: ',category_input.value);
     
     // var userAgentInfo = window.navigator.userAgent;
@@ -81,7 +93,7 @@ const requestClick = () => {
     }
     console.log("browserID: ",browser)
     
-    
+
     
     // TODO: Add http call to request for agent
     const body = JSON.stringify({
@@ -104,22 +116,24 @@ const requestClick = () => {
         console.log(htmltext);
         const html = JSON.parse(htmltext);
         console.log(html)
-        logMessage(html);
-        
         
         if (html.error == 'Adding support req failed'){
             console.log("No Available Agent")
-            agentStatusText.innerHTML = "No Available Agent";
+            setCookie("agentName", "No Available Agent", 1);
+            console.log("cookie :" + getCookie("agentavail"))
+            // agentStatusText.innerHTML = "No Available Agent";
         }else{
             agentId = html.support_req.agentId;
+            setCookie('agentId',html.support_req.agentId,1);
             guestId = html.support_req.guestId;
+            setCookie('guestId',html.support_req.guestId,1);
             agentName = html.support_req.agentName;
-            agentStatusText.innerHTML = agentName;
+            setCookie('agentName',html.support_req.agentName,1);
+            // agentStatusText.innerHTML = agentName;
         }
         rainbowSDK.connection.signin(email.value, 'Rainbow1!')
         .then(res => {
             console.log(res);
-            logMessage(res);
             document.addEventListener(rainbowSDK.conversations.RAINBOW_ONCONVERSATIONCHANGED, (msg) => {
                 console.log(msg);
                 agentMessage(msg);
@@ -135,9 +149,10 @@ const requestClick = () => {
     
 };
 
-const logMessage = (message) => {
-    chatArea.innerHTML += `LOG: \n ${message} \n\n`;
-};
+
+    
+    
+
 
 const agentMessage = (message) => {
     chatArea.innerHTML += `Agent: \n ${message} \n\n`;
