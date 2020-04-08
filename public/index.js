@@ -2,62 +2,31 @@
 import rainbowSDK from './rainbow-sdk.min.js';
 // const rainbowSDK = require('rainbow-web-sdk');
  // If you use the bundler (for example - Webpack)
+ // Run using ./node_modules/http-server/bin/http-server public/ -p 8887
 
-const chatArea = document.getElementById('chatarea');
+let chatArea;
 const sendArea = document.getElementById('sendchatarea');
 const sendMessageBtn = document.getElementsByClassName('sendbutton')[0];
 //const categoryDropdown = document.getElementsByClassName('dropdownlist')[0];
 const requestButton = document.getElementsByClassName('requestbutton')[0];
-var agentStatusText = document.getElementById('agent_status');
+// var agentStatusText;
 var username = document.getElementById('username_input');
 var email = document.getElementById('email_input');
 var category_input = document.getElementById('category_input');
-let guestId;
-let agentId;
-let agentName;
 
-const onReady = async () => {
-    if (requestButton){
-        requestButton.addEventListener('click', requestClick, false);
-    }
-    if (sendMessageBtn){
-        sendMessageBtn.addEventListener('click', sendClick, false);
-    }
-};
 
-var onLoaded = function onLoaded() {
-    console.log('[Hello World] :: On SDK Loaded !');
-
-    rainbowSDK
-        .initialize('843d81a06c2311eaa8fbfb2c1e16e226', '0iV19xt6OdGoQb2N9V1Evp1KKkOV9FHRIn8c9bEOFixcwzKwDB3xWAGp1MVmWEkg')
-        .then(() => {
-            console.log('[Hello World] :: Rainbow SDK is initialized!');
-            /*
-            rainbowSDK.contacts.searchById(id)
-            .then((contact) => {
-                console.log(contact);
-            })
-            .catch(err => {
-                console.log(err);
-            });
-            */
-        })
-        .catch(err => {
-            console.log('[Hello World] :: Something went wrong with the SDK.', err);
-        });
-};
 
 const sendClick = () => {
     chatArea.innerHTML += `You: \n ${sendArea.value} \n\n`;
     sendArea.value = '';
 };
 
-
 const requestClick = () => {
     console.log("testttttt");
     console.log('name: ',username.value);
     console.log('email: ',email.value);
     console.log('category: ',category_input.value);
+
     
     // var userAgentInfo = window.navigator.userAgent;
     // console.log(userAgentInfo,"userAgentInfo")
@@ -79,72 +48,19 @@ const requestClick = () => {
         browser = 'ie';
         //alert("Chrome이 아닙니다"); 
     }
-    console.log("browserID: ",browser)
+    console.log("browserID: ",browser);
+
+    localStorage.setItem('username', username.value);
+    localStorage.setItem('email', email.value);
+    localStorage.setItem('category', category_input.value);
+    localStorage.setItem('browser', browser);
     
-    
-    
-    // TODO: Add http call to request for agent
-    const body = JSON.stringify({
-        support_req: {
-            name: username.value,
-            email: email.value,
-            reqId: "ayylmao",
-            browserId: browser,
-            category: category_input.value
-        }
-    })
-    fetch("http://localhost:3030/user/newsupportreq", {
-        method: "POST",
-        body,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }).then((response) => response.text())
-    .then(htmltext => {
-        console.log(htmltext);
-        const html = JSON.parse(htmltext);
-        console.log(html)
-        logMessage(html);
-        
-        
-        if (html.error == 'Adding support req failed'){
-            console.log("No Available Agent")
-            agentStatusText.innerHTML = "No Available Agent";
-        }else{
-            agentId = html.support_req.agentId;
-            guestId = html.support_req.guestId;
-            agentName = html.support_req.agentName;
-            agentStatusText.innerHTML = agentName;
-        }
-        rainbowSDK.connection.signin(email.value, 'Rainbow1!')
-        .then(res => {
-            console.log(res);
-            logMessage(res);
-            document.addEventListener(rainbowSDK.conversations.RAINBOW_ONCONVERSATIONCHANGED, (msg) => {
-                console.log(msg);
-                agentMessage(msg);
-            })
-            // rainbowSDK.im.sendMessageToConversation(conv, "Hilol");
-            
-        })
-        .catch(err => console.error(err));
-    });
-    // alert("Connecting to Agent");
-    window.location ="chat.html";
-    
-    
+    window.location.href ="chat.html";
 };
 
-const logMessage = (message) => {
-    chatArea.innerHTML += `LOG: \n ${message} \n\n`;
-};
-
-const agentMessage = (message) => {
-    chatArea.innerHTML += `Agent: \n ${message} \n\n`;
-};
-
-document.addEventListener(rainbowSDK.RAINBOW_ONREADY, onReady);
-
-document.addEventListener(rainbowSDK.RAINBOW_ONLOADED, onLoaded);
-rainbowSDK.start();
-rainbowSDK.load();
+if (requestButton !== undefined){
+    requestButton.addEventListener('click', requestClick, false);
+}
+if (sendMessageBtn !== undefined){
+    sendMessageBtn.addEventListener('click', sendClick, false);
+}
