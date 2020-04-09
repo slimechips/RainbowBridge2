@@ -6,17 +6,20 @@ const chat = document.getElementsByClassName('chat')[0];
 const sendArea = document.getElementById('sendchatarea');
 const agentStatusText = document.getElementById('agent_status');
 const sendMessageBtn = document.getElementsByClassName('sendbutton')[0];
+const quitBtn = document.getElementsByClassName('quitbutton')[0];
 let guestId;
 let agentId;
 let agentName;
 let currentConvo;
+let reqIdG;
 let username;
 let email;
 let category;
 let browser;
+let checkIntervalTimer;
 
 const onReady = async () => {
-
+  quitBtn.addEventListener('click', closeConvoNetwork, false);
 };
 
 var onLoaded = function onLoaded() {
@@ -61,58 +64,83 @@ var onLoaded = function onLoaded() {
           headers: {
               'Content-Type': 'application/json'
           }
-      }).then((response) => response.text())
-      .then(htmltext => {
-          console.log(htmltext);
-          const html = JSON.parse(htmltext);
-          console.log(html);
-  
-          
-          if (html.error == 'Adding support req failed'){
-              console.log("No Available Agent");
-              return;
-          } else {
-              agentId = html.support_req.agentId;
-              guestId = html.support_req.guestId;
-              agentName = html.support_req.agentName;
-              agentStatusText.innerHTML = agentName;
-              // localStorage.setItem("agent_name", agentName);
-              // localStorage.setItem("rainbow_sdk", rainbowSDK);
-          }
-          console.log('Signing in now');
-          rainbowSDK.connection.signin(email, 'Rainbow1!')
-          .then((res) => {
-              console.log(res);
-              return rainbowSDK.contacts.searchById(agentId);
-          })
-          .then(contact => {
-            console.log(contact);
-            return rainbowSDK.conversations.openConversationForContact(contact);
-          })
-          .then(conv => {
-            console.log(conv);
-            currentConvo = conv;
-            return rainbowSDK.im.sendMessageToConversation(conv, 'I am the customer hi');
-          })
-          .then(res => {
-            console.log(res);
-            document.addEventListener(rainbowSDK.im.RAINBOW_ONNEWIMMESSAGERECEIVED, (msg, conv, cc) => {
-              console.log("ON IM RECIEVED");
-              console.log(JSON.stringify(msg));
-              console.log(conv);
-              console.log(cc);
-              agentMessage(extractMessage(msg));
-            });
-            sendMessageBtn.addEventListener('click', sendClick, false);  
-          })
-          .catch((err => console.error(err)));
-              // rainbowSDK.im.sendMessageToConversation(conv, "Hilol");
-              
+      }).then((response) => {
+        return response.text();
       })
-      .catch(err => console.error(err));
+      .then(htmltext => {
+        setupConvo(htmltext);
+        checkIntervalTimer = setInterval(() => {
+          checkConvoStatusNetwork(reqIdG);
+        }, 5000);
+      })
+      .catch((err) => {
+        console.error(err);
+        pollForSupportRequest(email);
+      });
       // alert("Connecting to Agent");
   
     });
+
+};
+
+const pollForSupportRequest = (email) => {
+  const apiUrl = `http://localhost:3030/common/reqstatus?email=${email}`;
+  fetch(apiUrl)
+    .then((response) => {
+      if (response.status >= 400) {
+        throw new Error('Error requesting status');
+      }
+      return response.text();
+    })
+    .then((htmlText) => {
+      if (!htmlText.active) {
+        setTimeout(() => {
+          pollForSupportRequest(email);
+        }, 5000);
+        throw new Error('Support Req not avail yet');
+      }
+      setupConvo(htmlText);              
+    })
+    .catch(console.error);
+};
+
+const setupConvo = (htmlText) => {
+  const html = JSON.parse(htmlText);
+  agentId = html.support_req.agentId;
+  guestId = html.support_req.guestId;
+  agentName = html.support_req.agentName;
+  reqIdG = html.support_req.reqId;
+  agentStatusText.innerHTML = agentName;
+  // localStorage.setItem("agent_name", agentName);
+  // localStorage.setItem("rainbow_sdk", rainbowSDK);
+      
+  console.log('Signing in now');
+  rainbowSDK.connection.signin(email, 'Rainbow1!')
+  .then((res) => {
+      console.log(res);
+      return rainbowSDK.contacts.searchById(agentId);
+  })
+  .then(contact => {
+    console.log(contact);
+    return rainbowSDK.conversations.openConversationForContact(contact);
+  })
+  .then(conv => {
+    console.log(conv);
+    currentConvo = conv;
+    return rainbowSDK.im.sendMessageToConversation(conv, 'I am the customer hi');
+  })
+  .then(res => {
+    console.log(res);
+    document.addEventListener(rainbowSDK.im.RAINBOW_ONNEWIMMESSAGERECEIVED, (msg, conv, cc) => {
+      console.log("ON IM RECIEVED");
+      console.log(JSON.stringify(msg));
+      console.log(conv);
+      console.log(cc);
+      agentMessage(extractMessage(msg));
+    });
+    sendMessageBtn.addEventListener('click', sendClick, false);  
+  })
+  .catch((err => console.error(err)));
 
 };
 
@@ -145,6 +173,44 @@ const extractMessage = (msg) => {
 const sendMessageNetwork = (msg) => {
   if (currentConvo === undefined) return;
   rainbowSDK.im.sendMessageToConversation(currentConvo, msg);
+};
+
+const checkConvoStatusNetwork = (reqId) => {
+  const apiUrl = `http://localhost:3030/common/reqstatus?reqId=${reqId}`;
+  fetch(apiUrl)
+    .then((response) => {
+      if (response.status >= 400) {
+        throw new Error('Failed to check status');
+      }
+      return response.text();
+    })
+    .then((htmlText) => {
+      console.log(htmlText);
+      const html = JSON.parse(htmlText);
+      const { active } = html;
+      if (!active) {
+        clearInterval(checkIntervalTimer);
+        closeConvo();
+      }
+    })
+    .catch(console.error);
+};
+
+const closeConvoNetwork = () => {
+  const apiUrl = `http://localhost:3030/common/closereq/?reqId=${reqIdG}&agentId=${agentId}`;
+  clearInterval(checkIntervalTimer);
+  fetch(apiUrl)
+    .then((response) => response.text())
+    .then((htmlText) => {
+      console.log(htmlText);
+    })
+    .catch(console.error)
+    .finally(() => closeConvo());
+};
+
+const closeConvo = () => {
+  // TODO: Close convo
+  console.log('Closing convo');
 };
 
 document.addEventListener(rainbowSDK.RAINBOW_ONREADY, onReady);
