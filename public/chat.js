@@ -17,6 +17,7 @@ let email;
 let category;
 let browser;
 let checkIntervalTimer;
+let reqStatusInterval;
 
 const onReady = async () => {
   quitBtn.addEventListener('click', closeConvoNetwork, false);
@@ -46,6 +47,11 @@ var onLoaded = function onLoaded() {
       email = localStorage.getItem('email');
       category = localStorage.getItem('category');
       browser = localStorage.getItem('browser');
+
+      if (email === null || email === undefined || email === '') {
+        console.log('Invalid email given');
+        return;
+      }
   
       // TODO: Add http call to request for agent
       const body = JSON.stringify({
@@ -58,7 +64,7 @@ var onLoaded = function onLoaded() {
           }
       });
   
-      fetch("http://localhost:3030/user/newsupportreq", {
+      fetch("http://13.76.87.194:3030/user/newsupportreq", {
           method: "POST",
           body,
           headers: {
@@ -68,7 +74,7 @@ var onLoaded = function onLoaded() {
         return response.text();
       })
       .then(htmltext => {
-        setupConvo(htmltext);
+        setupConvo(JSON.parse(htmltext));
         checkIntervalTimer = setInterval(() => {
           checkConvoStatusNetwork(reqIdG);
         }, 5000);
@@ -84,7 +90,13 @@ var onLoaded = function onLoaded() {
 };
 
 const pollForSupportRequest = (email) => {
-  const apiUrl = `http://localhost:3030/common/reqstatus?email=${email}`;
+  reqStatusInterval = setInterval(() => {
+    checkForSupportRequest(email);
+  }, 5000);
+}
+
+const checkForSupportRequest = (email) => {
+  const apiUrl = `http://13.76.87.194:3030/common/reqstatus?email=${email}`;
   fetch(apiUrl)
     .then((response) => {
       if (response.status >= 400) {
@@ -93,19 +105,17 @@ const pollForSupportRequest = (email) => {
       return response.text();
     })
     .then((htmlText) => {
-      if (!htmlText.active) {
-        setTimeout(() => {
-          pollForSupportRequest(email);
-        }, 5000);
-        throw new Error('Support Req not avail yet');
+      const html = JSON.parse(htmlText)
+      if (html.active === true) {
+        console.log('Session now active');
+        clearInterval(reqStatusInterval);
+        setupConvo(html);
       }
-      setupConvo(htmlText);              
     })
     .catch(console.error);
 };
 
-const setupConvo = (htmlText) => {
-  const html = JSON.parse(htmlText);
+const setupConvo = (html) => {
   agentId = html.support_req.agentId;
   guestId = html.support_req.guestId;
   agentName = html.support_req.agentName;
@@ -176,7 +186,7 @@ const sendMessageNetwork = (msg) => {
 };
 
 const checkConvoStatusNetwork = (reqId) => {
-  const apiUrl = `http://localhost:3030/common/reqstatus?reqId=${reqId}`;
+  const apiUrl = `http://13.76.87.194:3030/common/reqstatus?reqId=${reqId}`;
   fetch(apiUrl)
     .then((response) => {
       if (response.status >= 400) {
@@ -197,7 +207,7 @@ const checkConvoStatusNetwork = (reqId) => {
 };
 
 const closeConvoNetwork = () => {
-  const apiUrl = `http://localhost:3030/common/closereq/?reqId=${reqIdG}&agentId=${agentId}`;
+  const apiUrl = `http://13.76.87.194:3030/common/closereq/?reqId=${reqIdG}&agentId=${agentId}`;
   clearInterval(checkIntervalTimer);
   fetch(apiUrl)
     .then((response) => response.text())
