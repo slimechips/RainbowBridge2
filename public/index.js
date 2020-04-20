@@ -1,4 +1,4 @@
-import rainbowSDK from './rainbow-sdk.min.js';
+// import rainbowSDK from './rainbow-sdk.min.js';
 /* Chose one of the import statement below */
 // const rainbowSDK = require('rainbow-web-sdk');
  // If you use the bundler (for example - Webpack)
@@ -109,8 +109,9 @@ const requestClick = () => {
                 category,
             }
         });
-        
-        fetch("http://13.76.87.194:3030/user/newsupportreq", {
+        // const apiUrl = "http://13.76.87.194:3030/user/newsupportreq";
+        const apiUrl = "http://localhost:3030/user/newsupportreq";
+        fetch(apiUrl, {
             method: "POST",
             body,
             headers: {
@@ -120,15 +121,27 @@ const requestClick = () => {
           return response.text();
         })
         .then(htmltext => {
-            console.log("fetched") 
-            setupConvo(JSON.parse(htmltext));
-            checkIntervalTimer = setInterval(() => {
-                checkConvoStatusNetwork(reqIdG);
-            }, 5000);
+            const htmlJson = JSON.parse(htmltext);
+            if (htmlJson.error) throw new Error(htmlJson.error);
+            console.log('Session now active');
+            agentId = htmlJson.support_req.agentId;
+            guestId = htmlJson.support_req.guestId;
+            agentName = htmlJson.support_req.agentName;
+            reqIdG = htmlJson.support_req.reqId;
+            localStorage.setItem('agentId',agentId)
+            localStorage.setItem('guestId',guestId)
+            localStorage.setItem('agentName',agentName)
+            localStorage.setItem('reqIdG',reqIdG);
+            window.location.href = "chat.html";
         }) 
         .catch((err) => {
-          console.error(err);
-          pollForSupportRequest(email);
+          console.error(err.message);
+          if (err.message === 'No available agents') {
+            pollForSupportRequest(email);
+          } else {
+            alert(err.message);
+            isloading.stop();
+          }
         });
     }
 };
@@ -137,135 +150,51 @@ if (requestButton !== undefined){
     requestButton.addEventListener('click', requestClick, false);
 }
 
-var onLoaded = function onLoaded() {
-    console.log('[Hello World] :: On SDK Loaded !');
-  
-    rainbowSDK
-      .initialize('843d81a06c2311eaa8fbfb2c1e16e226', '0iV19xt6OdGoQb2N9V1Evp1KKkOV9FHRIn8c9bEOFixcwzKwDB3xWAGp1MVmWEkg')
-      .then(() => {
-          console.log('[Hello World] :: Rainbow SDK is initialized!');
-          /*
-          rainbowSDK.contacts.searchById(id)
-          .then((contact) => {
-              console.log(contact);
-          })
-          .catch(err => {
-              console.log(err);
-          });
-          */
-      })
-      .catch(err => {
-          console.log('[Hello World] :: Something went wrong with the SDK.', err);
-      });
-  
-  };
 
-  const pollForSupportRequest = (email) => {
-      console.log("pollForSupportRequest")
-    reqStatusInterval = setInterval(() => {
-      checkForSupportRequest(email);
-    }, 5000);
-  }
-  
-  const checkForSupportRequest = (email) => {
-    const apiUrl = `http://13.76.87.194:3030/common/reqstatus?email=${email}`;
-    console.log("checkForSupportRequest")
-    fetch(apiUrl)
-      .then((response) => {
-        if (response.status >= 400) {
-          throw new Error('Error requesting status');
-        }
-        return response.text();
-      })
-      .then((htmlText) => {
-        const html = JSON.parse(htmlText)
-        console.log(html)
-        
+const pollForSupportRequest = (email) => {
+    console.log("pollForSupportRequest")
+  reqStatusInterval = setInterval(() => {
+    checkForSupportRequest(email);
+  }, 5000);
+}
 
-        if (html.active === true) {
-          console.log('Session now active');
-          agentId = html.support_req.agentId;
-          guestId = html.support_req.guestId;
-          agentName = html.support_req.agentName;
-          reqIdG = html.support_req.reqId;
-          localStorage.setItem('agentId',agentId)
-          localStorage.setItem('guestId',guestId)
-          localStorage.setItem('agentName',agentName)
-          localStorage.setItem('reqIdG',reqIdG)
-          clearInterval(reqStatusInterval);
-        //   alert("going to next page")
-          window.location.href ="chat.html";
-        }else if (html.error == 'Adding support req failed'){
-            alert("Invalid Data")
-        }else if (html.error == 'Support req pending'){
-            alert("Queuing")
-        }else if (html.active ===false){
-            alert("Queuing")
-        }
-      })
-      .catch(console.error);
-  };  
+const checkForSupportRequest = (email) => {
+  // const apiUrl = `http://13.76.87.194:3030/common/reqstatus?email=${email}`;
+  const apiUrl = `http://localhost:3030/common/reqstatus?email=${email}`;
 
-  const checkConvoStatusNetwork = (reqId) => {
-    const apiUrl = `http://13.76.87.194:3030/common/reqstatus?reqId=${reqId}`;
-    fetch(apiUrl)
-      .then((response) => {
-        if (response.status >= 400) {
-          throw new Error('Failed to check status');
-        }
-        return response.text();
-      })
-      .then((htmlText) => {
-        console.log(htmlText);
-        const html = JSON.parse(htmlText);
-        const { active } = html;
-        if (!active) {
-          clearInterval(checkIntervalTimer);
-        //   closeConvo();
-        }
-      })
-      .catch(console.error);
-  };
-
-
-  const setupConvo = (html) => {
-    agentId = html.support_req.agentId;
-    guestId = html.support_req.guestId;
-    agentName = html.support_req.agentName;
-    reqIdG = html.support_req.reqId;
-    agentStatusText.innerHTML = agentName;
-
-    console.log('Signing in now');
-    rainbowSDK.connection.signin(email, 'Rainbow1!')
-    .then((res) => {
-        console.log(res);
-        return rainbowSDK.contacts.searchById(agentId);
+  console.log("checkForSupportRequest")
+  fetch(apiUrl)
+    .then((response) => {
+      if (response.status >= 400) {
+        throw new Error('Error requesting status');
+      }
+      return response.text();
     })
-    .then(contact => {
-      console.log(contact);
-      return rainbowSDK.conversations.openConversationForContact(contact);
-    })
-    .then(conv => {
-      console.log(conv);
-      currentConvo = conv;
-      return rainbowSDK.im.sendMessageToConversation(conv, 'I am the customer hi');
-    })
-    .then(res => {
-      console.log(res);
-      document.addEventListener(rainbowSDK.im.RAINBOW_ONNEWIMMESSAGERECEIVED, (msg, conv, cc) => {
-        console.log("ON IM RECIEVED");
-        console.log(JSON.stringify(msg));
-        console.log(conv);
-        console.log(cc);
-        agentMessage(extractMessage(msg));
-      });
-      sendMessageBtn.addEventListener('click', sendClick, false);  
-    })
-    .catch((err => console.error(err)));
-  
-  };
+    .then((htmlText) => {
+      const html = JSON.parse(htmlText)
+      console.log(html)
+      
 
-
-  document.addEventListener(rainbowSDK.RAINBOW_ONLOADED, onLoaded);  
-  rainbowSDK.start();
-  rainbowSDK.load();
+      if (html.active === true) {
+        console.log('Session now active');
+        agentId = html.support_req.agentId;
+        guestId = html.support_req.guestId;
+        agentName = html.support_req.agentName;
+        reqIdG = html.support_req.reqId;
+        localStorage.setItem('agentId',agentId)
+        localStorage.setItem('guestId',guestId)
+        localStorage.setItem('agentName',agentName)
+        localStorage.setItem('reqIdG',reqIdG)
+        clearInterval(reqStatusInterval);
+      //   alert("going to next page")
+        window.location.href ="chat.html";
+      }else if (html.error == 'Adding support req failed'){
+          alert("Invalid Data")
+      }else if (html.error == 'Support req pending'){
+          alert("Queuing")
+      }else if (html.active ===false){
+          alert("Queuing")
+      }
+    })
+    .catch(console.error);
+};  
