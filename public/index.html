@@ -12,7 +12,7 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.min.js"></script>
         <script src="./vendors-sdk.min.js"></script>
         <script type="module" src="./index.js"></script>
-        <link rel="stylesheet" type="text/css" href="style.css?ver=20">
+        <link rel="stylesheet" type="text/css" href="style.css?ver=21">
     </head>
 
     <body>
@@ -27,7 +27,7 @@
                 <label class='findagent'>Find Your Agent</label>
                 <br><br><br>
                 <input required type='text' class='form1' id='username_input' placeholder="Username" onKeyPress={this.handleKeyPress} />
-                <input required type='text' class='form' id='email_input' placeholder="Email" onKeyPress={this.handleKeyPress} />
+                <input required type="email"  class='form' id='email_input' placeholder="Email" onKeyPress={this.handleKeyPress} />
                  <div class="dropdown">
                     <select class="dropdownlist" id="category_input" value="Category">
                         <option value="sales">Sales</option>

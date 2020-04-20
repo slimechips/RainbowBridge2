@@ -1,12 +1,10 @@
 import rainbowSDK from './rainbow-sdk.min.js';
 
-const myChat = document.getElementById('mychat');
-const yourChat = document.getElementById('yourchat');
-const chat = document.getElementsByClassName('chat')[0];
 const sendArea = document.getElementById('sendchatarea');
 const agentStatusText = document.getElementById('agent_status');
 const sendMessageBtn = document.getElementsByClassName('sendbutton')[0];
 const quitBtn = document.getElementsByClassName('quitbutton')[0];
+var objDiv = document.getElementsByClassName('chat')[0];
 let guestId;
 let agentId;
 let agentName;
@@ -17,7 +15,30 @@ let email;
 let category;
 let browser;
 let checkIntervalTimer;
-let reqStatusInterval;
+
+var isloading = {
+  start: function() {
+    if (document.getElementById('wfLoading')) {
+      return;
+    }
+    var ele = document.createElement('div');
+    ele.setAttribute('id', 'wfLoading');
+    ele.classList.add('loading-layer');
+    ele.innerHTML = '<div class="loadingtext">Connecting for Agent<div><span class="loading-wrap"><span class="loading-text"><span>.</span><span>.</span><span>.</span></span></span>';
+    document.body.append(ele);
+
+    // Animation
+    ele.classList.add('active-loading');
+  },
+  stop: function() {
+    var ele = document.getElementById('wfLoading');
+    if (ele) {
+      ele.remove();
+    }
+  }
+}
+isloading.start();
+
 
 const onReady = async () => {
   quitBtn.addEventListener('click', closeConvoNetwork, false);
@@ -42,89 +63,29 @@ var onLoaded = function onLoaded() {
     })
     .catch(err => {
         console.log('[Hello World] :: Something went wrong with the SDK.', err);
-    }).then(() => {
-      username = localStorage.getItem('username');
-      email = localStorage.getItem('email');
-      category = localStorage.getItem('category');
-      browser = localStorage.getItem('browser');
-
-      if (email === null || email === undefined || email === '') {
-        console.log('Invalid email given');
-        return;
-      }
-  
-      // TODO: Add http call to request for agent
-      const body = JSON.stringify({
-          support_req: {
-              name: username,
-              email,
-              reqId: "ayylmao",
-              browserId: browser,
-              category,
-          }
-      });
-  
-      fetch("http://13.76.87.194:3030/user/newsupportreq", {
-          method: "POST",
-          body,
-          headers: {
-              'Content-Type': 'application/json'
-          }
-      }).then((response) => {
-        return response.text();
-      })
-      .then(htmltext => {
-        setupConvo(JSON.parse(htmltext));
-        checkIntervalTimer = setInterval(() => {
-          checkConvoStatusNetwork(reqIdG);
-        }, 5000);
-      })
-      .catch((err) => {
-        console.error(err);
-        pollForSupportRequest(email);
-      });
-      // alert("Connecting to Agent");
-  
     });
+    
+    setTimeout(function() {
+      setupConvo();
+    }, 5000);
 
 };
 
-const pollForSupportRequest = (email) => {
-  reqStatusInterval = setInterval(() => {
-    checkForSupportRequest(email);
-  }, 5000);
-}
 
-const checkForSupportRequest = (email) => {
-  const apiUrl = `http://13.76.87.194:3030/common/reqstatus?email=${email}`;
-  fetch(apiUrl)
-    .then((response) => {
-      if (response.status >= 400) {
-        throw new Error('Error requesting status');
-      }
-      return response.text();
-    })
-    .then((htmlText) => {
-      const html = JSON.parse(htmlText)
-      if (html.active === true) {
-        console.log('Session now active');
-        clearInterval(reqStatusInterval);
-        setupConvo(html);
-      }
-    })
-    .catch(console.error);
-};
 
-const setupConvo = (html) => {
-  agentId = html.support_req.agentId;
-  guestId = html.support_req.guestId;
-  agentName = html.support_req.agentName;
-  reqIdG = html.support_req.reqId;
+const setupConvo = () => {
+  agentId = localStorage.getItem('agentId')
+  guestId = localStorage.getItem('guestId')
+  agentName = localStorage.getItem('agentName')
+  reqIdG = localStorage.getItem('agentId')
   agentStatusText.innerHTML = agentName;
-  // localStorage.setItem("agent_name", agentName);
-  // localStorage.setItem("rainbow_sdk", rainbowSDK);
-      
+
   console.log('Signing in now');
+  username = localStorage.getItem('username');
+  email = localStorage.getItem('email');
+  category = localStorage.getItem('category');
+  browser = localStorage.getItem('browser');
+
   rainbowSDK.connection.signin(email, 'Rainbow1!')
   .then((res) => {
       console.log(res);
@@ -151,8 +112,24 @@ const setupConvo = (html) => {
     sendMessageBtn.addEventListener('click', sendClick, false);  
   })
   .catch((err => console.error(err)));
+  
 
+  setTimeout(function() {
+    isloading.stop();
+  }, 6000);
 };
+
+var scrolled = false;
+function updateScroll(){
+    if(!scrolled){
+        var element = document.getElementById("chat");
+        element.scrollTop = element.scrollHeight;
+    }
+}
+
+$("#chat").on('scroll', function(){
+    scrolled=true;
+});
 
 const sendClick = () => {
   displayMyMessage(sendArea.value);
@@ -165,15 +142,15 @@ const displayMyMessage = (msg) => {
   myDIV.innerHTML += `\n ${msg} \n`;
   myDIV.setAttribute("class","mychat");
   document.getElementsByClassName('chat')[0].appendChild(myDIV);
+  objDiv.scrollTop = objDiv.scrollHeight;
 };
 
 const agentMessage = (message) => {
   const yourDIV = document.createElement("div");
   yourDIV.innerHTML += `\n ${message} \n`;
-
   yourDIV.setAttribute("class","yourchat");
-  
   document.getElementsByClassName('chat')[0].appendChild(yourDIV);
+  objDiv.scrollTop = objDiv.scrollHeight;
 };
 
 const extractMessage = (msg) => {
@@ -183,27 +160,6 @@ const extractMessage = (msg) => {
 const sendMessageNetwork = (msg) => {
   if (currentConvo === undefined) return;
   rainbowSDK.im.sendMessageToConversation(currentConvo, msg);
-};
-
-const checkConvoStatusNetwork = (reqId) => {
-  const apiUrl = `http://13.76.87.194:3030/common/reqstatus?reqId=${reqId}`;
-  fetch(apiUrl)
-    .then((response) => {
-      if (response.status >= 400) {
-        throw new Error('Failed to check status');
-      }
-      return response.text();
-    })
-    .then((htmlText) => {
-      console.log(htmlText);
-      const html = JSON.parse(htmlText);
-      const { active } = html;
-      if (!active) {
-        clearInterval(checkIntervalTimer);
-        closeConvo();
-      }
-    })
-    .catch(console.error);
 };
 
 const closeConvoNetwork = () => {
@@ -220,11 +176,16 @@ const closeConvoNetwork = () => {
 
 const closeConvo = () => {
   // TODO: Close convo
+  sendMessageBtn.setAttribute("disabled","disabled");
+  sendArea.setAttribute("disabled",true)
+  sendArea.disabled=true;
+  agentStatusText.innerHTML = "Chat Ended";
   console.log('Closing convo');
 };
 
 document.addEventListener(rainbowSDK.RAINBOW_ONREADY, onReady);
-
-document.addEventListener(rainbowSDK.RAINBOW_ONLOADED, onLoaded);
+document.addEventListener(rainbowSDK.RAINBOW_ONLOADED, onLoaded);  
 rainbowSDK.start();
 rainbowSDK.load();
+
+
