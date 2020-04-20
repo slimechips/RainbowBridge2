@@ -109,8 +109,8 @@ const requestClick = () => {
                 category,
             }
         });
-        // const apiUrl = "http://13.76.87.194:3030/user/newsupportreq";
-        const apiUrl = "http://localhost:3030/user/newsupportreq";
+        const apiUrl = "http://13.76.87.194:3030/user/newsupportreq";
+        // const apiUrl = "http://localhost:3030/user/newsupportreq";
         fetch(apiUrl, {
             method: "POST",
             body,
@@ -159,8 +159,8 @@ const pollForSupportRequest = (email) => {
 }
 
 const checkForSupportRequest = (email) => {
-  // const apiUrl = `http://13.76.87.194:3030/common/reqstatus?email=${email}`;
-  const apiUrl = `http://localhost:3030/common/reqstatus?email=${email}`;
+  const apiUrl = `http://13.76.87.194:3030/common/reqstatus?email=${email}`;
+  // const apiUrl = `http://localhost:3030/common/reqstatus?email=${email}`;
 
   console.log("checkForSupportRequest")
   fetch(apiUrl)
