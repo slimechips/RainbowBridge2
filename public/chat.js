@@ -77,7 +77,7 @@ const setupConvo = () => {
   agentId = localStorage.getItem('agentId')
   guestId = localStorage.getItem('guestId')
   agentName = localStorage.getItem('agentName')
-  reqIdG = localStorage.getItem('agentId')
+  reqIdG = localStorage.getItem('reqIdG')
   agentStatusText.innerHTML = agentName;
 
   console.log('Signing in now');
