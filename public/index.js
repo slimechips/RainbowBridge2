@@ -15,7 +15,6 @@ let agentId;
 let agentName;
 let currentConvo;
 let reqIdG;
-let category;
 let browser;
 let checkIntervalTimer;
 let reqStatusInterval;
@@ -90,10 +89,10 @@ const requestClick = () => {
         localStorage.setItem('browser', browser);
 
 
-        username = localStorage.getItem('username');
-        email = localStorage.getItem('email');
-        category = localStorage.getItem('category');
-        browser = localStorage.getItem('browser');
+        const usernameVal = localStorage.getItem('username');
+        const emailVal = localStorage.getItem('email');
+        const category = localStorage.getItem('category');
+        const browserVal = localStorage.getItem('browser');
 
         if (email === null || email === undefined || email === '') {
             console.log('Invalid email given');
@@ -102,10 +101,10 @@ const requestClick = () => {
         
         const body = JSON.stringify({
             support_req: {
-                name: username,
-                email,
+                name: usernameVal,
+                email: emailVal,
                 reqId: "ayylmao",
-                browserId: browser,
+                browserId: browserVal,
                 category,
             }
         });
