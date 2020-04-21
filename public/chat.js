@@ -177,6 +177,7 @@ const closeConvoNetwork = () => {
 
 const closeConvo = () => {
   // TODO: Close convo
+  rainbowSDK.conversations.closeConversation(currentConvo);
   sendMessageBtn.setAttribute("disabled","disabled");
   sendArea.setAttribute("disabled",true)
   sendArea.disabled=true;
