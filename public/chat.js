@@ -164,6 +164,7 @@ const sendMessageNetwork = (msg) => {
 
 const closeConvoNetwork = () => {
   const apiUrl = `http://13.76.87.194:3030/common/closereq/?reqId=${reqIdG}&agentId=${agentId}`;
+  // const apiUrl = `http://localhost:3030/common/closereq/?reqId=${reqIdG}&agentId=${agentId}`;
   clearInterval(checkIntervalTimer);
   fetch(apiUrl)
     .then((response) => response.text())
